@@ -23,7 +23,7 @@
     <canvas id="noiseCanvas"></canvas>
     <script>
         window.onload = () => {
-            const SCALE_FACTOR = 8;
+            const SCALE_FACTOR = parseInt(new URLSearchParams(window.location.search).get('scale')) || 8;
 
             const canvas = document.getElementById('noiseCanvas');
             const ctx = canvas.getContext('2d');
@@ -60,7 +60,7 @@
             const blurredCtx = blurredCanvas.getContext('2d');
 
             // Apply blur filter
-            blurredCtx.filter = `blur(${10 / SCALE_FACTOR}px)`; // Adjust blur radius as needed
+            blurredCtx.filter = `blur(${8 / SCALE_FACTOR}px)`; // Adjust blur radius as needed
             blurredCtx.drawImage(noiseCanvas, 0, 0);
 
             // Function to render the image
