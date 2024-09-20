@@ -22,24 +22,28 @@
 <body>
     <canvas id="noiseCanvas"></canvas>
     <script>
-        window.onload = function () {
-            var canvas = document.getElementById('noiseCanvas');
-            var ctx = canvas.getContext('2d');
+        window.onload = () => {
+            const SCALE_FACTOR = 8;
+
+            const canvas = document.getElementById('noiseCanvas');
+            const ctx = canvas.getContext('2d');
 
             // Set canvas size to window size
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
-            var width = canvas.width;
-            var height = canvas.height;
+            ctx.scale(SCALE_FACTOR, SCALE_FACTOR);
+
+            const width = canvas.width / SCALE_FACTOR;
+            const height = canvas.height / SCALE_FACTOR;
 
             // Create offscreen canvas for white noise
-            var noiseCanvas = document.createElement('canvas');
+            const noiseCanvas = document.createElement('canvas');
             noiseCanvas.width = width;
             noiseCanvas.height = height;
-            var noiseCtx = noiseCanvas.getContext('2d');
-            var noiseImageData = noiseCtx.createImageData(width, height);
-            var data = noiseImageData.data;
+            const noiseCtx = noiseCanvas.getContext('2d');
+            const noiseImageData = noiseCtx.createImageData(width, height);
+            const data = noiseImageData.data;
 
             // Fill data with random grayscale values
             for (var i = 0; i < data.length; i += 4) {
@@ -50,24 +54,24 @@
             noiseCtx.putImageData(noiseImageData, 0, 0);
 
             // Create blurred version
-            var blurredCanvas = document.createElement('canvas');
+            const blurredCanvas = document.createElement('canvas');
             blurredCanvas.width = width;
             blurredCanvas.height = height;
-            var blurredCtx = blurredCanvas.getContext('2d');
+            const blurredCtx = blurredCanvas.getContext('2d');
 
             // Apply blur filter
-            blurredCtx.filter = 'blur(10px)'; // Adjust blur radius as needed
+            blurredCtx.filter = `blur(${10 / SCALE_FACTOR}px)`; // Adjust blur radius as needed
             blurredCtx.drawImage(noiseCanvas, 0, 0);
 
             // Function to render the image
-            function render(cx, cy) {
+            const render = (cx, cy) => {
                 ctx.clearRect(0, 0, width, height);
                 // Draw the original noise
                 ctx.drawImage(noiseCanvas, 0, 0);
                 // Set clipping region to circle
                 ctx.save();
                 ctx.beginPath();
-                ctx.arc(cx, cy, 150, 0, 2 * Math.PI);
+                ctx.arc(cx / SCALE_FACTOR, cy / SCALE_FACTOR, 150 / SCALE_FACTOR, 0, 2 * Math.PI);
                 ctx.clip();
                 // Draw the blurred image in the clipped region
                 ctx.drawImage(blurredCanvas, 0, 0);
@@ -78,10 +82,8 @@
             ctx.drawImage(noiseCanvas, 0, 0);
 
             // Add mousemove event listener
-            canvas.addEventListener('mousemove', function (event) {
-                var x = event.clientX;
-                var y = event.clientY;
-                render(x, y);
+            canvas.addEventListener('mousemove', ({ clientX, clientY }) => {
+                render(clientX, clientY);
             });
         };
     </script>
